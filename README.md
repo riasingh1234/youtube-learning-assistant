@@ -1,16 +1,21 @@
-# React + Vite
+# YouTube Learning Assistant 🤖💡
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An AI-powered full-stack learning platform that transforms educational topics and video study concepts into custom interactive study modules.
 
-Currently, two official plugins are available:
+## 🚀 Key Features
+- **Smart Flashcards:** Leverages Gemini AI to dynamically unpack broad study texts or keywords into structured, bite-sized study concepts.
+- **Interactive Quizzes:** Tests knowledge retention by generating multi-option review tests dynamically on any subject.
+- **Real-Time Study Chat:** Includes an integrated AI study assistant formatted with markdown responses to answer deep dive explanations instantly.
+- **Local History Tracking:** Saves and manages previous sessions locally using client browser storage.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🛠️ Tech Stack
+- **Frontend Framework:** React (Vite), React Router DOM, React Markdown
+- **Backend Server:** Node.js, Express, CORS
+- **Core Engine API:** Official Google Gen AI SDK (`@google/genai`)
+- **Model Engine:** `gemini-2.5-flash`
 
-## React Compiler
+## 📦 Local Installation & Setup
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. **Clone the project repository:**
+   ```bash
+   git clone [https://github.com/riasingh1234/youtube-learning-assistant.git](https://github.com/riasingh1234/youtube-learning-assistant.git)
