@@ -1,0 +1,123 @@
+/* ==========================================================================
+   FLASHCARD STYLES (PHASE 1)
+   ========================================================================== */
+
+/* Container that gives the 3D perspective depth */
+.flashcard-container {
+  perspective: 1000px;
+  width: 100%;
+  max-width: 500px;
+  height: 280px;
+  margin: 20px auto;
+}
+
+/* The element that actually rotates */
+.flashcard-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+/* This class triggers the rotation when added via React state */
+.flashcard-container.is-flipped .flashcard-inner {
+  transform: rotateY(180deg);
+}
+
+/* Base style for both front and back faces */
+.flashcard-front, .flashcard-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  box-sizing: border-box;
+}
+
+/* Front Face Styling (The Question) */
+.flashcard-front {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+}
+
+/* Back Face Styling (The Answer) */
+.flashcard-back {
+  background: #ffffff;
+  color: #1a202c;
+  transform: rotateY(180deg);
+  border: 2px solid #764ba2;
+}
+
+/* Small label utility for context */
+.card-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+  opacity: 0.8;
+}
+
+
+/* ==========================================================================
+   QUIZ STYLES (PHASE 2)
+   ========================================================================== */
+
+/* Quiz Page Layout Wrapper */
+.quiz-container {
+  max-width: 650px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+  text-align: left;
+  font-family: sans-serif;
+}
+
+/* Options vertical arrangement layout */
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 24px 0;
+}
+
+/* Individual choice list choices options styling */
+.option-btn {
+  width: 100%;
+  padding: 16px 20px;
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #2d3748;
+  background-color: #f7fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+/* Option item hover response styling */
+.option-btn:hover:not(:disabled) {
+  background-color: #edf2f7;
+  border-color: #cbd5e0;
+}
+
+/* Selected layout accent highlighting */
+.option-btn.selected {
+  background-color: #f3ebff;
+  border-color: #764ba2;
+  color: #764ba2;
+  font-weight: 600;
+}
