@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ReactMarkdown from 'react-markdown'; // 1. Import the library
+import ReactMarkdown from 'react-markdown'; 
 import "../App.css";
 
 function Chat() {
@@ -18,7 +18,8 @@ function Chat() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/chat", {
+      // Updated endpoint path to target the live Render backend service
+      const response = await fetch("https://youtube-learning-assistant.onrender.com/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: input }),
@@ -28,6 +29,7 @@ function Chat() {
     } catch (err) {
       setMessages((prev) => [...prev, { role: "ai", text: "Sorry, I couldn't reach the AI." }]);
     } finally {
+      setMessages((prev) => [...prev].filter(m => m.text !== "Sorry, I couldn't reach the AI.")); 
       setLoading(false);
     }
   };
@@ -46,9 +48,8 @@ function Chat() {
               backgroundColor: msg.role === "user" ? "#764ba2" : "#ffffff", 
               color: msg.role === "user" ? "#ffffff" : "#2d3748",
               border: msg.role === "ai" ? "1px solid #e2e8f0" : "none",
-              textAlign: "left" // Ensures text alignment inside the bubble is consistent
+              textAlign: "left" 
             }}>
-              {/* 2. Wrap the text in ReactMarkdown */}
               <ReactMarkdown>{msg.text}</ReactMarkdown>
             </div>
           </div>

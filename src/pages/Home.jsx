@@ -13,7 +13,8 @@ function Home() {
     setLoading(true);
     
     try {
-      const response = await fetch("http://localhost:5000/summary", {
+      // Updated endpoint path to target the live Render backend service
+      const response = await fetch("https://youtube-learning-assistant.onrender.com/summary", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -32,7 +33,6 @@ function Home() {
       setFlashcards(data.flashcards);
       setCurrentCard(0);
 
-      // Save to localStorage for History tab tracking
       const existingHistory = JSON.parse(localStorage.getItem("studyHistory")) || [];
       const newHistoryItem = {
         id: Date.now(),
@@ -127,7 +127,7 @@ function Home() {
             <button 
               onClick={nextCard} 
               disabled={currentCard === flashcards.length - 1}
-              style={{ padding: "10px 20px", borderRadius: "8px", border: "none", backgroundColor: currentCard === flashcards.length - 1 ? "#e2e8f0" : "#764ba2", color: currentCard === flashcards.length - 1 ? "#a0aec0" : "#ffffff", fontWeight: "600", cursor: currentCard === flashcards.length - 1 ? "not-allowed" : "pointer" }}
+              style={{ padding: "10px 20px", borderRadius: "8px", border: "none", backgroundColor: currentCard === flashcards.length - 1 ? "#e2e8f0" : "#764ba2", color: currentCard === flashcards.length - 1 ? "#ffffff" : "#ffffff", fontWeight: "600", cursor: currentCard === flashcards.length - 1 ? "not-allowed" : "pointer" }}
             >
               Next →
             </button>

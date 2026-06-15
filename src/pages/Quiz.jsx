@@ -14,7 +14,8 @@ function Quiz() {
     if (!topic.trim()) return alert("Please enter a topic!");
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/quiz", {
+      // Updated endpoint path to target the live Render backend service
+      const response = await fetch("https://youtube-learning-assistant.onrender.com/quiz", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ topic }),
@@ -55,7 +56,6 @@ function Quiz() {
     );
   }
 
-  // Input view if no quiz is loaded
   if (quizDeck.length === 0) {
     return (
       <div className="quiz-container">
@@ -73,7 +73,6 @@ function Quiz() {
     );
   }
 
-  // Active quiz view
   return (
     <div className="quiz-container">
       <h3>{quizDeck[currentQuestion].question}</h3>
