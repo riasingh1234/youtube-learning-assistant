@@ -1,141 +1,109 @@
-import { useState } from "react";
-import Flashcard from "../components/Flashcard"; 
-import "../App.css"; 
+import React, { useState } from "react";
 
-function Home() {
-  const [url, setUrl] = useState("");
+const Home = () => {
+  const [inputValue, setInputValue] = useState("");
   const [flashcards, setFlashcards] = useState([]);
-  const [currentCard, setCurrentCard] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const generateSummary = async () => {
-    if (!url.trim()) return;
-    setLoading(true);
+  const handleGenerate = async () => {
+    if (!inputValue.trim()) return;
     
+    setLoading(true);
+    setErrorMsg("");
+    setFlashcards([]);
+    setCurrentIndex(0);
+    setIsFlipped(false);
+
     try {
-      // Updated endpoint path to target the live Render backend service
+      // FORCED LIVE BACKEND CONNECTION
       const response = await fetch("https://youtube-learning-assistant.onrender.com/summary", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text: url }),
+        body: JSON.stringify({ text: inputValue }),
       });
 
-      const data = await response.json();
-
-      if (!data || !data.flashcards) {
-        alert("No structured flashcards returned from the server.");
-        setLoading(false);
-        return;
+      if (!response.ok) {
+        throw new Error("Server responded with an error status.");
       }
 
-      setFlashcards(data.flashcards);
-      setCurrentCard(0);
-
-      const existingHistory = JSON.parse(localStorage.getItem("studyHistory")) || [];
-      const newHistoryItem = {
-        id: Date.now(),
-        topic: url,
-        date: new Date().toLocaleDateString(),
-        cards: data.flashcards
-      };
-      localStorage.setItem("studyHistory", JSON.stringify([newHistoryItem, ...existingHistory]));
-
+      const data = await response.json();
+      
+      if (data.flashcards && data.flashcards.length > 0) {
+        setFlashcards(data.flashcards);
+      } else {
+        throw new Error("No flashcards found in the server response.");
+      }
     } catch (error) {
-      console.log("Error fetching summary:", error);
-      alert("Failed to connect to backend server.");
+      console.error("Frontend Generation Error:", error);
+      setErrorMsg("Failed to connect to the live AI engine. Please check your network or try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const nextCard = () => {
-    if (currentCard < flashcards.length - 1) {
-      setCurrentCard(currentCard + 1);
-    }
-  };
-
-  const prevCard = () => {
-    if (currentCard > 0) {
-      setCurrentCard(currentCard - 1);
-    }
-  };
-
   return (
-    <div style={{ maxWidth: "700px", margin: "40px auto", padding: "0 20px", fontFamily: "sans-serif" }}>
-      <h1 style={{ textAlign: "center", color: "#1a202c", marginBottom: "10px" }}>
-        YouTube Learning Assistant
-      </h1>
-      <p style={{ textAlign: "center", color: "#718096", marginBottom: "30px" }}>
-        Convert video lectures into smart, interactive study decks instantly.
-      </p>
+    <div style={{ maxWidth: "800px", margin: "40px auto", padding: "0 20px", textAlign: "center", fontFamily: "sans-serif" }}>
+      <h1 style={{ fontSize: "2.5rem", marginBottom: "10px", color: "#1e293b" }}>YouTube Learning Assistant</h1>
+      <p style={{ color: "#64748b", marginBottom: "30px" }}>Convert video lectures into smart, interactive study decks instantly.</p>
 
-      <div style={{ display: "flex", gap: "12px", marginBottom: "40px" }}>
+      <div style={{ display: "flex", gap: "10px", marginBottom: "30px" }}>
         <input
           type="text"
-          placeholder="Paste YouTube Link or Topic Here..."
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          style={{
-            flex: 1,
-            padding: "12px 16px",
-            borderRadius: "10px",
-            border: "2px solid #e2e8f0",
-            fontSize: "1rem",
-            outline: "none"
-          }}
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          placeholder="Paste YouTube Link or Study Topic Here..."
+          style={{ flex: 1, padding: "12px 16px", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "1rem" }}
         />
         <button
-          onClick={generateSummary}
+          onClick={handleGenerate}
           disabled={loading}
-          style={{
-            padding: "12px 24px",
-            borderRadius: "10px",
-            border: "none",
-            backgroundColor: loading ? "#a0aec0" : "#764ba2",
-            color: "#ffffff",
-            fontWeight: "600",
-            fontSize: "1rem",
-            cursor: loading ? "not-allowed" : "pointer"
-          }}
+          style={{ padding: "12px 24px", borderRadius: "8px", border: "none", backgroundColor: "#6366f1", color: "#fff", fontSize: "1rem", fontWeight: "600", cursor: "pointer" }}
         >
           {loading ? "Generating..." : "Generate Deck"}
         </button>
       </div>
 
+      {errorMsg && <p style={{ color: "#ef4444", fontWeight: "500" }}>{errorMsg}</p>}
+
       {flashcards.length > 0 && (
-        <div style={{ textAlign: "center" }}>
-          <p style={{ color: "#718096", fontWeight: "500" }}>
-            Card {currentCard + 1} of {flashcards.length}
-          </p>
+        <div>
+          <p style={{ color: "#64748b", fontWeight: "600" }}>Card {currentIndex + 1} of {flashcards.length}</p>
+          
+          <div 
+            onClick={() => setIsFlipped(!isFlipped)}
+            style={{ minHeight: "200px", background: "#f8fafc", border: "2px solid #6366f1", borderRadius: "12px", padding: "30px", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", margin: "20px 0", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)" }}
+          >
+            <h3 style={{ color: "#0f172a", fontSize: "1.25rem" }}>
+              {isFlipped ? flashcards[currentIndex].a : flashcards[currentIndex].q}
+            </h3>
+          </div>
+          <p style={{ fontSize: "0.875rem", color: "#94a3b8" }}>Click the card to flip it</p>
 
-          <Flashcard 
-            key={currentCard} 
-            question={flashcards[currentCard].q} 
-            answer={flashcards[currentCard].a} 
-          />
-
-          <div style={{ display: "flex", justifyContent: "center", gap: "16px", marginTop: "24px" }}>
+          <div style={{ display: "flex", justifyContent: "center", gap: "20px", marginTop: "20px" }}>
             <button 
-              onClick={prevCard} 
-              disabled={currentCard === 0}
-              style={{ padding: "10px 20px", borderRadius: "8px", border: "1px solid #cbd5e0", backgroundColor: currentCard === 0 ? "#edf2f7" : "#ffffff", color: currentCard === 0 ? "#a0aec0" : "#4a5568", fontWeight: "600", cursor: currentCard === 0 ? "not-allowed" : "pointer" }}
+              disabled={currentIndex === 0}
+              onClick={() => { setCurrentIndex(prev => prev - 1); setIsFlipped(false); }}
+              style={{ padding: "8px 16px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff", cursor: "pointer" }}
             >
-              ← Previous
+              Previous
             </button>
             <button 
-              onClick={nextCard} 
-              disabled={currentCard === flashcards.length - 1}
-              style={{ padding: "10px 20px", borderRadius: "8px", border: "none", backgroundColor: currentCard === flashcards.length - 1 ? "#e2e8f0" : "#764ba2", color: currentCard === flashcards.length - 1 ? "#ffffff" : "#ffffff", fontWeight: "600", cursor: currentCard === flashcards.length - 1 ? "not-allowed" : "pointer" }}
+              disabled={currentIndex === flashcards.length - 1}
+              onClick={() => { setCurrentIndex(prev => prev + 1); setIsFlipped(false); }}
+              style={{ padding: "8px 16px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#fff", cursor: "pointer" }}
             >
-              Next →
+              Next
             </button>
           </div>
         </div>
       )}
     </div>
   );
-}
+};
 
 export default Home;
