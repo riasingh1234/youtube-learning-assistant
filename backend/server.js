@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { GoogleGenAI } from "@google/genai";
+import { YoutubeTranscript } from "youtube-transcript"; // Imported transcript scraper
 
 dotenv.config();
 
@@ -21,7 +22,7 @@ app.get("/", (req, res) => {
 });
 
 // ==========================================================================
-// ROUTE 1: Bulletproof JSON Flashcards (Home Page)
+// ROUTE 1: Bulletproof JSON Flashcards (Home Page with YouTube Transcript Support)
 // ==========================================================================
 app.post("/summary", async (req, res) => {
   try {
@@ -30,15 +31,36 @@ app.post("/summary", async (req, res) => {
       return res.status(400).json({ error: "No text or topic content provided" });
     }
 
+    let finalInputText = text;
+
+    // Check if the input text looks like a valid YouTube video URL link
+    if (text.includes("youtube.com") || text.includes("youtu.be")) {
+      console.log("Detected a YouTube Link! Extracting video transcript lines...");
+      try {
+        const transcriptObj = await YoutubeTranscript.fetchTranscript(text);
+        // Combine the array of segmented transcript strings into one single block of text
+        finalInputText = transcriptObj.map(item => item.text).join(" ");
+        console.log(`Transcript successfully built! Total Characters analyzed: ${finalInputText.length}`);
+      } catch (transcriptError) {
+        console.error("Failed to read YouTube captions automatically:", transcriptError);
+        return res.status(422).json({ 
+          error: "Could not fetch transcript.", 
+          details: "Please ensure this YouTube link points to a valid video with English captions enabled." 
+        });
+      }
+    } else {
+      console.log("Processing direct string topic input query directly.");
+    }
+
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
-      contents: `You are an expert study assistant. Break down the following topic into a list of 5 to 7 crucial study concepts.
+      contents: `You are an expert study assistant. Break down the following educational topic or video transcript text source into a list of 5 to 7 crucial study concepts.
       
-      Return the response as a JSON array of objects with the structure:
+      Return the response as a JSON array of objects with the exact structure:
       [{ "q": "Short Concept Name", "a": "Detailed explanation sentence" }]
 
-      Topic/Text to summarize:
-      ${text}
+      Topic/Transcript text content to summarize:
+      ${finalInputText}
 
       Return ONLY valid JSON. Do not include any markdown styling or \`\`\`json blocks.`,
     });
@@ -50,7 +72,7 @@ app.post("/summary", async (req, res) => {
     res.json({ flashcards: parsedCards });
   } catch (error) {
     console.error("Summary API Error:", error);
-    res.status(500).json({ error: "Failed to generate structured flashcards." });
+    res.status(500).json({ error: "Failed to generate structured flashcards from content." });
   }
 });
 
