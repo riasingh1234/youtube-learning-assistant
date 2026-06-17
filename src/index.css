@@ -1,13 +1,286 @@
-/* Container that gives the 3D perspective depth */
-.flashcard-container {
-  perspective: 1000px;
-  width: 100%;
-  max-width: 450px;
-  height: 280px;
-  margin: 20px auto;
+/* ==========================================================================
+   DESIGN TOKENS
+   ========================================================================== */
+:root {
+  --brand-1: #6366f1;
+  --brand-2: #8b5cf6;
+  --brand-gradient: linear-gradient(135deg, var(--brand-1) 0%, var(--brand-2) 100%);
+
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --border: #e2e8f0;
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+
+  --success: #16a34a;
+  --success-bg: #f0fdf4;
+  --danger: #ef4444;
+  --danger-bg: #fef2f2;
+  --warning: #d97706;
+  --warning-bg: #fffbeb;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12);
+
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
 }
 
-/* The element that actually rotates */
+/* ==========================================================================
+   RESET
+   ========================================================================== */
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: inherit;
+}
+
+input, textarea {
+  font-family: inherit;
+}
+
+/* ==========================================================================
+   LAYOUT
+   ========================================================================== */
+.page {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 40px 20px 80px;
+}
+
+.page-narrow {
+  max-width: 680px;
+}
+
+/* ==========================================================================
+   NAVBAR
+   ========================================================================== */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 28px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.navbar-brand-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: var(--brand-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 6px;
+}
+
+.nav-link {
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.92rem;
+  transition: all 0.15s ease;
+}
+
+.nav-link:hover {
+  background: var(--bg);
+  color: var(--text-primary);
+}
+
+.nav-link.active {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--brand-1);
+}
+
+/* ==========================================================================
+   BUTTONS
+   ========================================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn-primary {
+  background: var(--brand-gradient);
+  color: #fff;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover:not(:disabled) {
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-secondary {
+  background: var(--surface);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--bg);
+}
+
+.btn-danger {
+  background: transparent;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--danger-bg);
+}
+
+/* ==========================================================================
+   INPUTS
+   ========================================================================== */
+.input-field {
+  width: 100%;
+  padding: 13px 16px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  font-size: 0.97rem;
+  color: var(--text-primary);
+  background: var(--surface);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input-field:focus {
+  border-color: var(--brand-1);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+/* ==========================================================================
+   BANNERS
+   ========================================================================== */
+.banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  text-align: left;
+  margin: 20px 0;
+}
+
+.banner-warning {
+  background: var(--warning-bg);
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.banner-danger {
+  background: var(--danger-bg);
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.banner-info {
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+/* ==========================================================================
+   SPINNER
+   ========================================================================== */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2.5px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease;
+}
+
+/* ==========================================================================
+   FLASHCARD (3D flip)
+   ========================================================================== */
+.flashcard-container {
+  perspective: 1200px;
+  width: 100%;
+  max-width: 520px;
+  height: 280px;
+  margin: 24px auto;
+  cursor: pointer;
+}
+
 .flashcard-inner {
   position: relative;
   width: 100%;
@@ -15,15 +288,12 @@
   text-align: center;
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   transform-style: preserve-3d;
-  cursor: pointer;
 }
 
-/* This class triggers the rotation when added via React state */
 .flashcard-container.is-flipped .flashcard-inner {
   transform: rotateY(180deg);
 }
 
-/* Base style for both front and back faces */
 .flashcard-front, .flashcard-back {
   position: absolute;
   width: 100%;
@@ -34,31 +304,29 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  box-shadow: var(--shadow-lg);
+  box-sizing: border-box;
 }
 
-/* Front Face Styling (The Question) */
 .flashcard-front {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--brand-gradient);
   color: #ffffff;
 }
 
-/* Back Face Styling (The Answer) */
 .flashcard-back {
   background: #ffffff;
-  color: #1a202c;
-  transform: rotateY(180deg); /* Pre-rotated so it faces away initially */
-  border: 2px solid #764ba2;
+  color: var(--text-primary);
+  transform: rotateY(180deg);
+  border: 2px solid var(--brand-2);
 }
 
-/* Small label utility for context */
 .card-label {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin-bottom: 12px;
-  opacity: 0.8;
+  opacity: 0.85;
+  font-weight: 700;
 }

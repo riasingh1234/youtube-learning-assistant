@@ -1,26 +1,21 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Flashcard from "../components/Flashcard";
 import "../App.css";
 
+function loadHistory() {
+  try {
+    const savedData = localStorage.getItem("studyHistory");
+    return savedData ? JSON.parse(savedData) : [];
+  } catch (error) {
+    console.error("Error reading localStorage:", error);
+    return [];
+  }
+}
+
 function History() {
-  const [historyItems, setHistoryItems] = useState([]);
+  const [historyItems, setHistoryItems] = useState(loadHistory);
   const [selectedDeck, setSelectedDeck] = useState(null);
   const [currentCard, setCurrentCard] = useState(0);
-
-  // Safely load history from localStorage on component mount
-  useEffect(() => {
-    try {
-      const savedData = localStorage.getItem("studyHistory");
-      if (savedData) {
-        setHistoryItems(JSON.parse(savedData));
-      } else {
-        setHistoryItems([]);
-      }
-    } catch (error) {
-      console.error("Error reading localStorage:", error);
-      setHistoryItems([]);
-    }
-  }, []);
 
   const handleSelectDeck = (deck) => {
     setSelectedDeck(deck);
@@ -35,7 +30,7 @@ function History() {
     }
   };
 
-  // HELPER FUNCTION: Adds mock data immediately so you can test without using the home page input
+  // Lets you try the deck viewer instantly without generating a real deck first.
   const handleAddMockSession = () => {
     const mockSession = {
       id: Date.now(),
@@ -44,8 +39,8 @@ function History() {
       cards: [
         { q: "Core Definition", a: "Cloud computing delivers computing services like storage, servers, and databases over the internet." },
         { q: "Main Advantage", a: "It eliminates the upfront capital expense of buying hardware and setting up on-premise data centers." },
-        { q: "Key Model", a: "Infrastructure as a Service (IaaS), Platform as a Service (PaaS), and Software as a Service (SaaS)." }
-      ]
+        { q: "Key Model", a: "Infrastructure as a Service (IaaS), Platform as a Service (PaaS), and Software as a Service (SaaS)." },
+      ],
     };
 
     const updatedHistory = [mockSession, ...historyItems];
@@ -60,113 +55,78 @@ function History() {
   };
 
   const prevCard = () => {
-    if (currentCard > 0) {
-      setCurrentCard(currentCard - 1);
-    }
+    if (currentCard > 0) setCurrentCard(currentCard - 1);
   };
 
   return (
-    <div style={{ maxWidth: "800px", margin: "40px auto", padding: "0 20px", fontFamily: "sans-serif" }}>
-      
-      {/* Header Container */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "30px" }}>
+    <div className="page">
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px", flexWrap: "wrap", gap: "12px" }}>
         <div>
-          <h1 style={{ margin: 0, color: "#1a202c" }}>Study Vault</h1>
-          <p style={{ margin: "5px 0 0 0", color: "#718096" }}>Review past generated material anytime.</p>
+          <h1 style={{ margin: 0, fontSize: "1.9rem" }}>Study Vault</h1>
+          <p style={{ margin: "6px 0 0", color: "var(--text-secondary)" }}>Review past generated decks anytime.</p>
         </div>
         <div style={{ display: "flex", gap: "10px" }}>
-          <button 
-            onClick={handleAddMockSession}
-            style={{ padding: "10px 16px", border: "1px solid #764ba2", color: "#764ba2", backgroundColor: "#f3ebff", borderRadius: "8px", fontWeight: "600", cursor: "pointer" }}
-          >
-            + Quick Add Test Deck
+          <button onClick={handleAddMockSession} className="btn btn-secondary">
+            + Add Test Deck
           </button>
           {historyItems.length > 0 && (
-            <button 
-              onClick={handleClearHistory}
-              style={{ padding: "10px 16px", border: "1px solid #e53e3e", color: "#e53e3e", backgroundColor: "transparent", borderRadius: "8px", fontWeight: "600", cursor: "pointer" }}
-            >
-              Clear All Logs
+            <button onClick={handleClearHistory} className="btn btn-danger">
+              Clear All
             </button>
           )}
         </div>
       </div>
 
-      <div style={{ display: "flex", gap: "30px", marginTop: "20px" }}>
-        
-        {/* LEFT COLUMN: LIST OF SESSIONS */}
-        <div style={{ flex: "1", display: "flex", flexDirection: "column", gap: "12px" }}>
-          <h3 style={{ margin: "0 0 10px 0", color: "#4a5568" }}>Saved Sessions</h3>
-          
+      <div className="history-layout">
+        <div className="history-list-col">
+          <h3 style={{ margin: "0 0 4px", color: "var(--text-secondary)", fontSize: "0.95rem" }}>Saved Sessions</h3>
+
           {historyItems.length === 0 ? (
-            <div style={{ padding: "20px", border: "1px dashed #cbd5e0", borderRadius: "12px", backgroundColor: "#f7fafc", color: "#a0aec0", fontStyle: "italic", textAlign: "center" }}>
-              No study history found yet. Click "+ Quick Add Test Deck" above to test it instantly!
-            </div>
+            <div className="history-empty">No study history yet. Generate a deck on the Home page, or add a test deck above.</div>
           ) : (
             historyItems.map((item) => (
-              <div 
+              <div
                 key={item.id}
                 onClick={() => handleSelectDeck(item)}
-                style={{
-                  padding: "16px",
-                  borderRadius: "12px",
-                  border: selectedDeck?.id === item.id ? "2px solid #764ba2" : "1px solid #e2e8f0",
-                  backgroundColor: selectedDeck?.id === item.id ? "#f3ebff" : "#ffffff",
-                  cursor: "pointer",
-                  transition: "all 0.2s"
-                }}
+                className={`history-item ${selectedDeck?.id === item.id ? "active" : ""}`}
               >
-                <div style={{ fontWeight: "600", color: "#2d3748", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
-                  {item.topic}
-                </div>
-                <div style={{ fontSize: "0.8rem", color: "#718096", marginTop: "6px", display: "flex", justifyContent: "space-between" }}>
+                <div className="history-item-title">{item.topic}</div>
+                <div className="history-item-meta">
                   <span>📅 {item.date}</span>
-                  <span>📇 {item.cards?.length || 0} Cards</span>
+                  <span>📇 {item.cards?.length || 0} cards</span>
                 </div>
               </div>
             ))
           )}
         </div>
 
-        {/* RIGHT COLUMN: REVIEWS VISUALIZER CARD */}
-        <div style={{ flex: "1.5", borderLeft: "1px solid #edf2f7", paddingLeft: "30px" }}>
+        <div className="history-preview-col">
           {selectedDeck && selectedDeck.cards && selectedDeck.cards.length > 0 ? (
             <div style={{ textAlign: "center" }}>
-              <h3 style={{ color: "#2d3748", marginBottom: "4px" }}>Reviewing Deck</h3>
-              <p style={{ color: "#718096", margin: "0 0 20px 0", fontSize: "0.9rem" }}>
+              <h3 style={{ margin: "0 0 4px" }}>Reviewing Deck</h3>
+              <p className="deck-progress">
                 Card {currentCard + 1} of {selectedDeck.cards.length}
               </p>
 
-              <Flashcard 
+              <Flashcard
                 key={`${selectedDeck.id}-${currentCard}`}
                 question={selectedDeck.cards[currentCard].q}
                 answer={selectedDeck.cards[currentCard].a}
               />
 
-              <div style={{ display: "flex", justifyContent: "center", gap: "16px", marginTop: "24px" }}>
-                <button 
-                  onClick={prevCard} 
-                  disabled={currentCard === 0}
-                  style={{ padding: "10px 18px", borderRadius: "8px", border: "1px solid #cbd5e0", backgroundColor: currentCard === 0 ? "#edf2f7" : "#ffffff", color: currentCard === 0 ? "#a0aec0" : "#4a5568", fontWeight: "600", cursor: currentCard === 0 ? "not-allowed" : "pointer" }}
-                >
+              <div className="deck-nav">
+                <button onClick={prevCard} disabled={currentCard === 0} className="btn btn-secondary">
                   ← Prev
                 </button>
-                <button 
-                  onClick={nextCard} 
-                  disabled={currentCard === selectedDeck.cards.length - 1}
-                  style={{ padding: "10px 18px", borderRadius: "8px", border: "none", backgroundColor: currentCard === selectedDeck.cards.length - 1 ? "#e2e8f0" : "#764ba2", color: currentCard === selectedDeck.cards.length - 1 ? "#a0aec0" : "#ffffff", fontWeight: "600", cursor: currentCard === selectedDeck.cards.length - 1 ? "not-allowed" : "pointer" }}
-                >
+                <button onClick={nextCard} disabled={currentCard === selectedDeck.cards.length - 1} className="btn btn-secondary">
                   Next →
                 </button>
               </div>
             </div>
           ) : (
-            <div style={{ height: "100%", minHeight: "250px", display: "flex", alignItems: "center", justifyContent: "center", border: "2px dashed #e2e8f0", borderRadius: "16px", padding: "40px", color: "#a0aec0", textAlign: "center" }}>
-              Select a saved session from the left column to preview cards.
-            </div>
+            <div className="history-preview-empty">Select a saved session from the left to preview its cards.</div>
           )}
         </div>
-
       </div>
     </div>
   );

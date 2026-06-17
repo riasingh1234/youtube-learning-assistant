@@ -1,123 +1,354 @@
 /* ==========================================================================
-   FLASHCARD STYLES (PHASE 1)
+   HOME / HERO
    ========================================================================== */
-
-/* Container that gives the 3D perspective depth */
-.flashcard-container {
-  perspective: 1000px;
-  width: 100%;
-  max-width: 500px;
-  height: 280px;
-  margin: 20px auto;
-}
-
-/* The element that actually rotates */
-.flashcard-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
+.hero {
   text-align: center;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-  transform-style: preserve-3d;
+  margin-bottom: 36px;
 }
 
-/* This class triggers the rotation when added via React state */
-.flashcard-container.is-flipped .flashcard-inner {
-  transform: rotateY(180deg);
-}
-
-/* Base style for both front and back faces */
-.flashcard-front, .flashcard-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  box-sizing: border-box;
-}
-
-/* Front Face Styling (The Question) */
-.flashcard-front {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #ffffff;
-}
-
-/* Back Face Styling (The Answer) */
-.flashcard-back {
-  background: #ffffff;
-  color: #1a202c;
-  transform: rotateY(180deg);
-  border: 2px solid #764ba2;
-}
-
-/* Small label utility for context */
-.card-label {
-  font-size: 0.75rem;
+.hero-eyebrow {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 12px;
-  opacity: 0.8;
+  color: var(--brand-1);
+  background: rgba(99, 102, 241, 0.1);
+  padding: 6px 14px;
+  border-radius: 999px;
+  margin-bottom: 16px;
 }
 
+.hero-title {
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 12px;
+  color: var(--text-primary);
+}
+
+.hero-subtitle {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.generate-row {
+  display: flex;
+  gap: 10px;
+  margin: 28px 0 8px;
+}
+
+.deck-progress {
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+
+.deck-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin: 18px 0;
+}
+
+.deck-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background 0.2s ease;
+}
+
+.deck-dot.active {
+  background: var(--brand-1);
+}
+
+.flip-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.deck-nav {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.skeleton-card {
+  max-width: 520px;
+  height: 280px;
+  margin: 24px auto;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(90deg, #eef0f4 25%, #f6f7f9 37%, #eef0f4 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
 
 /* ==========================================================================
-   QUIZ STYLES (PHASE 2)
+   QUIZ
    ========================================================================== */
-
-/* Quiz Page Layout Wrapper */
 .quiz-container {
   max-width: 650px;
   margin: 40px auto;
-  padding: 30px;
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  padding: 32px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
   box-sizing: border-box;
   text-align: left;
-  font-family: sans-serif;
 }
 
-/* Options vertical arrangement layout */
+.quiz-progress-bar {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--border);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+
+.quiz-progress-fill {
+  height: 100%;
+  background: var(--brand-gradient);
+  transition: width 0.3s ease;
+}
+
+.quiz-question {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 4px;
+}
+
 .options-list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  margin: 24px 0;
+  gap: 12px;
+  margin: 22px 0;
 }
 
-/* Individual choice list choices options styling */
 .option-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
-  padding: 16px 20px;
+  padding: 15px 18px;
   text-align: left;
-  font-size: 1rem;
+  font-size: 0.97rem;
   font-weight: 500;
-  color: #2d3748;
-  background-color: #f7fafc;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
+  color: var(--text-primary);
+  background-color: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
   outline: none;
 }
 
-/* Option item hover response styling */
 .option-btn:hover:not(:disabled) {
-  background-color: #edf2f7;
-  border-color: #cbd5e0;
+  border-color: #cbd5e1;
 }
 
-/* Selected layout accent highlighting */
 .option-btn.selected {
-  background-color: #f3ebff;
-  border-color: #764ba2;
-  color: #764ba2;
+  background-color: rgba(99, 102, 241, 0.08);
+  border-color: var(--brand-1);
+  color: var(--brand-1);
   font-weight: 600;
+}
+
+.option-btn.correct {
+  background-color: var(--success-bg);
+  border-color: var(--success);
+  color: #15803d;
+  font-weight: 600;
+}
+
+.option-btn.incorrect {
+  background-color: var(--danger-bg);
+  border-color: var(--danger);
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+.option-btn:disabled {
+  cursor: default;
+}
+
+.score-circle {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: var(--brand-gradient);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0 auto 18px;
+  box-shadow: var(--shadow-md);
+}
+
+/* ==========================================================================
+   CHAT
+   ========================================================================== */
+.chat-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+}
+
+.chat-window {
+  height: 440px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 16px;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.chat-row {
+  display: flex;
+}
+
+.chat-row.user {
+  justify-content: flex-end;
+}
+
+.chat-bubble {
+  max-width: 75%;
+  padding: 11px 15px;
+  border-radius: var(--radius-md);
+  font-size: 0.94rem;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.chat-bubble.user {
+  background: var(--brand-gradient);
+  color: #fff;
+}
+
+.chat-bubble.ai {
+  background: var(--bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.chat-bubble p {
+  margin: 0;
+}
+
+.chat-typing {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.chat-input-row {
+  display: flex;
+  gap: 10px;
+}
+
+/* ==========================================================================
+   HISTORY
+   ========================================================================== */
+.history-layout {
+  display: flex;
+  gap: 28px;
+  margin-top: 20px;
+  align-items: flex-start;
+}
+
+.history-list-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.history-item {
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.history-item:hover {
+  border-color: #cbd5e1;
+}
+
+.history-item.active {
+  border-color: var(--brand-1);
+  background: rgba(99, 102, 241, 0.06);
+}
+
+.history-item-title {
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.history-item-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+.history-empty {
+  padding: 24px;
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  font-style: italic;
+  text-align: center;
+}
+
+.history-preview-col {
+  flex: 1.4;
+  border-left: 1px solid var(--border);
+  padding-left: 28px;
+}
+
+.history-preview-empty {
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .history-layout {
+    flex-direction: column;
+  }
+  .history-preview-col {
+    border-left: none;
+    padding-left: 0;
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+    width: 100%;
+  }
 }

@@ -1,28 +1,33 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+
+const NAV_ITEMS = [
+  { to: "/", label: "Home" },
+  { to: "/quiz", label: "Quiz" },
+  { to: "/chat", label: "Chat" },
+  { to: "/history", label: "History" },
+];
 
 function Navbar() {
-  const navStyle = {
-    padding: "16px 24px",
-    display: "flex",
-    gap: "24px",
-    borderBottom: "1px solid #e2e8f0",
-    backgroundColor: "#ffffff",
-    fontFamily: "sans-serif",
-    fontWeight: "600"
-  };
-
-  const linkStyle = {
-    color: "#4a5568",
-    textDecoration: "none",
-    transition: "color 0.2s"
-  };
+  const location = useLocation();
 
   return (
-    <nav style={navStyle}>
-      <Link to="/" style={linkStyle}>Home</Link>
-      <Link to="/quiz" style={linkStyle}>Quiz</Link>
-      <Link to="/chat" style={linkStyle}>Chat</Link>
-      <Link to="/history" style={linkStyle}>History</Link>
+    <nav className="navbar">
+      <Link to="/" className="navbar-brand">
+        <span className="navbar-brand-icon">🎓</span>
+        StudyBuddy
+      </Link>
+
+      <div className="navbar-links">
+        {NAV_ITEMS.map((item) => (
+          <Link
+            key={item.to}
+            to={item.to}
+            className={`nav-link ${location.pathname === item.to ? "active" : ""}`}
+          >
+            {item.label}
+          </Link>
+        ))}
+      </div>
     </nav>
   );
 }
